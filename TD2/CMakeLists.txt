@@ -1,0 +1,5 @@
+add_executable(Exo1 Exo1/Exo1.cpp)
+add_executable(Exo2 Exo2/Exo2.cpp)
+add_executable(Exo3 Exo3/Exo3.cpp)
+add_executable(Exo4 Exo4/Exo4.cpp)
+add_executable(Exo5 Exo5/Exo5.cpp)
