@@ -1,0 +1,5 @@
+add_executable(TD3_1 TD3_1/main.cpp)
+add_executable(TD3_2 TD3_2/Point2D.cpp TD3_2/Shape.cpp)
+add_executable(TD3_3 TD3_3/Vecteur.cpp)
+add_executable(TD3_4 TD3_1/main.cpp TD3_4/Polygon.cpp)
+add_executable(TD3_5 TD3_5/main.cpp)
