@@ -2,5 +2,5 @@
 #include <iostream>
 
 int Mon_vecteur::get_size() const {
-	return size;
+	return size_;
 }

@@ -1,6 +1,6 @@
 #include <iostream>
 class Mon_vecteur {
-	int size = 0;
+	int size_ = 0;
 	float* tab_;
 public:
 	Mon_vecteur(const int& size);
@@ -11,4 +11,4 @@ public:
 	friend std::ostream& operator<<(std::ostream& os, Mon_vecteur& v);
 	~Mon_vecteur();
 };
-Mon_vecteur::Mon_vecteur(const int& size) : size(size), tab_(new float[size]) {}
+Mon_vecteur::Mon_vecteur(const int& size) : size_(size), tab_(new float[size]) {}
