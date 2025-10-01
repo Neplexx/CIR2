@@ -11,4 +11,3 @@ public:
 	friend std::ostream& operator<<(std::ostream& os, Mon_vecteur& v);
 	~Mon_vecteur();
 };
-Mon_vecteur::Mon_vecteur(const int& size) : size_(size), tab_(new float[size]) {}

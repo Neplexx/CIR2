@@ -9,8 +9,9 @@ int main() {
 		v1(i) = static_cast<float>(i);
 		v2(i) = static_cast<float>(i + 1);
 	}
-	std::cout << "get_size :" << v1.get_size() << std::endl;
-	std::cout << "V1 :" << v1 << "V2 :" << v2 << std::endl;
+	std::cout << "get_size : " << v1.get_size() << std::endl;
+	std::cout << "V1 : " << v1 << " V2 : " << v2 << std::endl;
 	std::cout << "V1*V2 : " << v1 * v2 << std::endl;
-	std::cout << "V2*2 : " << v2 << std::endl;
+	v2 *= 2;
+	std::cout << "V2*2 : " << v2<< std::endl;
 }
