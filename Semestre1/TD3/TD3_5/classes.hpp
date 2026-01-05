@@ -14,7 +14,7 @@ private:
 public:
 	void withdraw(float amount);
 	void transfer(float amount, BankAccount account);
-}
+};
 
 class SavingsAccount : public BankAccount {
 private:

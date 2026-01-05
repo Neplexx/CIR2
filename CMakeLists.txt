@@ -8,3 +8,5 @@ add_subdirectory(Semestre1/TD3)
 add_subdirectory(Semestre1/Shape_C++)
 add_subdirectory(Semestre1/DS)
 add_subdirectory(Semestre1/DS2023)
+
+add_subdirectory(Semestre2/TD1)
