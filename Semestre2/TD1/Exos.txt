@@ -1,0 +1,46 @@
+TD1 : 
+
+Exercice 1
+
+Algo monotonie_croissante_maximale(entrée : tab, taille_tab ; sortie : deb, long)
+	long, deb, i = 1,1,1
+	Tant que (i < taille_tab - long + 1) Faire
+		j = j + 1
+		Tant que (j <= n && tab[j] >= tab[j-1]) Faire
+			j = j + 1
+		Si (j-i > long) Faire
+			long = j - i
+			deb = i
+		i = j
+
+
+Exercice 2
+
+Algo Suivant(entrée : mot ; sortie : mot)
+	For (i = k ; i > 0 ; i-=1) Faire
+		Si (mot[i] != dernièreLettre) Faire
+			mot[i] = succ(mot[i])
+			renvoie mot	
+		Fin Si
+		Sinon Faire
+			mot[i] = premiereLettre
+		Fin Sinon
+	Fin For
+Fin Algo
+
+
+Algo Generateur(entrée : mot)
+	mot_triee = sort(mot) //double boucle qui compare les doublons si pas le droit d'utiliser sort (optimisation)
+	For (i = 1; i < k ; i+=1) Faire
+		Si (mot_triee[i] == mot_triee[i+1]) Faire
+			renvoie "Erreur choix mot"
+		Fin Si
+	Fin For
+	mot_init = mot
+	For (i = 1 ; i <= k ; i+=1) Faire
+		mot_init[i] = mot[1]
+	Fin For
+
+	For (i = 1 ; i < k^k; i+=1) Faire
+		
+			
