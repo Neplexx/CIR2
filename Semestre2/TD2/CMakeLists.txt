@@ -1,0 +1,1 @@
+add_executable(TD2_S2 main.cpp)

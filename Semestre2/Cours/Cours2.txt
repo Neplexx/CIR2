@@ -1,0 +1,60 @@
+
+fonction echange(entre : x,y ; sors : x,y):
+	x = temp;
+	x = y;
+	y = temp;
+	renvoie x,y;
+
+fonction echange2(entre : x,y ; sors : x,y):
+	x = y + x;
+	y = x - y;
+	x = x - y;
+	renvoie x,y;
+
+
+fonction echange3(entre : x,y,z ; sors : x,y,z):
+	x = temp;
+	x = y;
+	y = z;
+	z = temp;
+	renvoie x,y,z;
+
+fonction factorielleRec(entre: entier; sors : entier):
+	si (entier <= 1) : 
+		renvoie 1;
+	sinon :
+		renvoie factorielleRec(entier - 1) * entier
+
+fonction factorielle(entre: entier; sors: entier):
+	for ( i = entier - 1 ; i > 0 ; i-=1):
+		entier = entier * i
+	renvoie entier
+
+fonction somme(entre : entier; sors : entier): 
+	si (entier <=1) : 
+		renvoie 1;
+	sinon : 
+		renvoie somme(entier-1) + entier
+
+fonction produitVec(Entrées : V1, V2, n ; Sorties : ProduitScalaire):
+	Pour (i = 0 ; i < n ; i+=1) Faire : 
+		produitScalaire = produitScalaire + V1[i] * V2[i];
+	renvoie ProduitScalaire
+
+
+fonction produitEuclidien(entrées : a,b ; sorties : r,q):
+	r = a;
+	tant que (r - b > 0):
+		r = r - b;
+		q = q + 1;
+	renvoie r,q
+
+fonction match(entrée : matrice ; sortie : nombre):
+	Pour (i = 0 ; i < N ; i +=1) Faire:
+		Pour (j = 0; j < i-1 ; j +=1) Faire :
+			Si (M[i][j] == 0):
+				Afficher("Match aller et retour");
+			Sinon:
+				Si (M[j][i]):
+					Afficher("Match retour");
+

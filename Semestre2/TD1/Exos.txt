@@ -36,11 +36,13 @@ Algo Generateur(entrée : mot)
 			renvoie "Erreur choix mot"
 		Fin Si
 	Fin For
-	mot_init = mot
-	For (i = 1 ; i <= k ; i+=1) Faire
-		mot_init[i] = mot[1]
-	Fin For
-
-	For (i = 1 ; i < k^k; i+=1) Faire
+	mot_courant = mot
+	AfficherMot(mot_courant)
+	Suivant(mot_courant)
+	Tant que (mot_courant != mot) Faire
+		mot_courant = Suivant(mot_courant)
+		AfficherMot(mot_courant)
+	Fin Tant que
+Fin Algo
 		
 			
