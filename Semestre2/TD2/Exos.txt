@@ -1,0 +1,9 @@
+Partie 1 :
+
+Algo estPremier(entrée : nombre; sortie : estPremier)
+	Pour (i = 2 ; i > n ; i+=1) Faire 
+		Si ((nombre % i ) == 0) Faire
+			renvoie estPremier = false;
+		Fin Si
+	Fin Pour
+	renvoie estPremier = true;
