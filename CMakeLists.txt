@@ -11,3 +11,4 @@ add_subdirectory(Semestre1/DS2023)
 
 add_subdirectory(Semestre2/TD1)
 add_subdirectory(Semestre2/TD2)
+add_subdirectory(Semestre2/TD3)
