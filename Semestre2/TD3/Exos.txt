@@ -7,3 +7,8 @@ Trace :
 1 : swap A et A donc AB => AB ; i = 1
 3 : AB => BA ; affichage BA
 1 : BA => AB
+
+
+Partie 4 : 
+
+Question : parce que chaque ville à ses uniques "paramètres (id coordonées)". Il n'est pas possible qu'une ville (clé) ai plusieurs "valeurs" possibles
