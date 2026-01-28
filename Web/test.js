@@ -73,3 +73,25 @@ for (i = 0; i < myArray.length ; i+=1){
     expo.push(Math.exp(myArray[i]));
 }
 console.log(expo);
+
+function Psum(tab){
+    total = 0;
+    for (i = 0; i < tab.length ; i+=1){
+        if (tab[i] > 0){ 
+            total += tab[i]; 
+        }
+    }
+    return total;
+}
+monTab = [1,-2,3,-4,5,-6,7,-8,9,-10];
+console.log(Psum(monTab));
+
+function Max(tab){
+    max = tab[0];
+    for (i = 1 ; i < tab.length ; i +=1){
+        if (tab[i] > max) max = tab[i];
+    }
+    return max;
+}
+
+console.log(Max(monTab));
