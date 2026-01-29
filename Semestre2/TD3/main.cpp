@@ -39,7 +39,7 @@ constexpr int nombreDeVilles = 4;
 constexpr int nombreCombinaisons = 24;
 constexpr int tailleCoteCarte = 100;
 
-void génération_villes(vector<string>& vecteur) {
+void generation_villes(vector<string>& vecteur) {
 	srand(grainePourLeRand);
 	for (int i = 0; i < nombreDeVilles; i += 1) {
 		string Ville = "";
@@ -96,7 +96,7 @@ void permutations(std::vector<std::string> vector) {
 
 int main()
 {
-	génération_villes(vecteurDeNomsDeVille);
+	generation_villes(vecteurDeNomsDeVille);
 	for (int i = 0; i < vecteurDeNomsDeVille.size(); i+=1) {
 		cout << vecteurDeNomsDeVille.at(i) << endl;
 	}
