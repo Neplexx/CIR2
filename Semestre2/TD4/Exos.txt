@@ -1,0 +1,35 @@
+Question A quelle structure de données vue en cours, le tableau 2D arcs vous fait-il penser ?
+
+à une matrice d'adjacence
+
+
+Algorithme Floyd-Warshall Trace
+
+avec 3 sommets A ; B ; C
+
+A -> C = 230
+A -> B = 40
+B -> C = 200
+C -> D = 250
+
+pointChemin[A][B] = A
+
+cheminCourt[A][B] + cheminCourt[B][C] > cheminCourt[A][C] 
+=> pointChemin[A][C] = A
+
+cheminCourt[B][C] + cheminCourt[C][D] < cheminCourt[B][D] 
+=> pointChemin[B][D] = C et cheminCourt[B][D] = cheminCourt [B][C] + cheminCourt[C][D]
+
+pointChemin[C][D] = C
+
+pointChemin[B][C] = B
+
+cheminCourt[A][C] + cheminCourt[C][D] < cheminCourt[A][D] 
+=> pointChemin[A][D] = C et cheminCourt[A][D] = cheminCourt[A][C] + cheminCourt[C][D]
+
+
+
+ix. Question. Déterminez le nombre d’instructions élémentaires maximales à réaliser
+dans l’Algorithme de Floyd-Warshall en fonction de n == TAILLEDUGRAPHE.
+
+n * n * n = n^3
