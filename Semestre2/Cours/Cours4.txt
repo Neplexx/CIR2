@@ -1,0 +1,93 @@
+          | s | b | c | d | e | f | t
+
+c         | 0 | oo| oo| oo| oo| oo| oo
+
+pred      | /O|   |   |   |   |   |
+
+straités  |   |   |   |   |   |   | 
+
+srestants | V | V | V | V | V | V | V
+
+
+Etape 1 : 
+
+
+          | s | b | c | d | e | f | t
+
+c         | 0 | 3 | 2 | oo| oo| oo| oo
+
+pred      | /O| s | s |   |   |   |
+
+straités  | V |   |   |   |   |   | 
+
+srestants | X | V | V | V | V | V | V
+
+
+Etape 2 : 
+
+
+          | s | b | c | d | e | f | t
+
+c         | 0 | 3 | 2 | 3 | oo| 3 | oo
+
+pred      | /O| s | s | c |   | c |
+
+straités  | V |   | V |   |   |   | 
+
+srestants | X | V | X | V | V | V | V
+
+
+Etape 3 : 
+
+
+          | s | b | c | d | e | f | t
+
+c         | 0 | 3 | 2 | 3 | 5 | 3 | oo
+
+pred      | /O| s | s | c | b | c |
+
+straités  | V | V | V |   |   |   | 
+
+srestants | X | X | X | V | V | V | V
+
+
+Etape 4 : 
+
+
+          | s | b | c | d | e | f | t
+
+c         | 0 | 3 | 2 | 3 | 4 | 3 | oo
+
+pred      | /O| s | s | c | d | c |
+
+straités  | V | V | V | V |   |   | 
+
+srestants | X | X | X | X | V | V | V
+
+
+Etape 5 : 
+
+
+          | s | b | c | d | e | f | t
+
+c         | 0 | 3 | 2 | 3 | 4 | 3 | 9
+
+pred      | /O| s | s | c | d | c | f
+
+straités  | V | V | V | V |   | V | 
+
+srestants | X | X | X | X | V | X | V
+
+
+Etape 6 : 
+
+
+          | s | b | c | d | e | f | t
+
+c         | 0 | 3 | 2 | 3 | 4 | 3 | 6
+
+pred      | /O| s | s | c | d | c | e
+
+straités  | V | V | V | V | V | V | X
+
+srestants | X | X | X | X | X | X | V

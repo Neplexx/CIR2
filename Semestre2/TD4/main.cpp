@@ -56,7 +56,7 @@ void afficherChemin2(int sommet1, int sommet2, bool& premier) {
     afficherChemin2(sommet1, suivant, premier);
 
     if (premier) {
-        std::cout << " \t\t par ";
+        std::cout << " par ";
         premier = false;
     }
     else {
@@ -71,7 +71,7 @@ void afficherChemin2(int sommet1, int sommet2, bool& premier) {
 void affichagePCCh() {
     for (int i = 0; i < TAILLEDUGRAPHE; i+=1) {
         for (int j = 0; j < TAILLEDUGRAPHE; j+=1) {
-            if (i != j && cheminCourt[i][j] != INFINI) {
+            if (i != j && cheminCourt[i][j] != INFINI) { //supprime les cas indÃ©finissables
                 std::cout << vecSommets[i] << " " << vecSommets[j] << " avec une distance de " << cheminCourt[i][j];
                 bool premier = true;
                 afficherChemin2(i, j, premier);
@@ -123,7 +123,7 @@ int main(){
     //Q14.2
 
     bool premier = true;
-    std::cout << "Chemin de Lille à Lyon";
+    std::cout << "Chemin de Lille - Lyon";
     afficherChemin2(0, 5, premier);
     std::cout << std::endl;
 
