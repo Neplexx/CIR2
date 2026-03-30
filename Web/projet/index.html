@@ -3,60 +3,176 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ultimate Trivia Quiz</title>
+    <title>TRIVIA MASTER</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="container">
-        <div id="start-screen">
-            <h1>Trivia Master</h1>
-            <p id="best-score-display">Record : 0</p>
-            
-            <div class="setup-group">
-                <label>Difficulté</label>
-                <select id="difficulty">
-                    <option value="easy">Facile</option>
-                    <option value="medium">Moyen</option>
-                    <option value="hard">Difficile</option>
-                </select>
 
-                <label>Catégorie</label>
-                <select id="category">
-                    <option value="9">Culture Générale</option>
-                    <option value="18">Informatique</option>
-                    <option value="23">Histoire</option>
-                    <option value="22">Géographie</option>
-                </select>
-            </div>
+<canvas id="bg-canvas"></canvas>
 
-            <button id="start-btn">Lancer le Quiz</button>
+<!-- START SCREEN -->
+<div id="start-screen" class="screen active">
+    <div class="start-inner">
+        <div class="logo-block">
+            <span class="logo-eyebrow">ULTIMATE</span>
+            <h1 class="logo-title">TRIVIA<br>MASTER</h1>
+            <div class="logo-line"></div>
         </div>
 
-        <div id="quiz-screen" class="hidden">
-            <div class="progress-bar-container">
-                <div id="progress-fill"></div>
+        <div class="best-scores-block">
+            <p class="block-label">MEILLEURS SCORES</p>
+            <div id="leaderboard-list">
+                <span class="no-scores">Aucun score enregistré</span>
             </div>
-            <div class="header">
-                <span id="progress-text">Question 1/10</span>
-                <span id="timer">⏳ 15s</span>
-            </div>
-            <h2 id="question-text">Chargement...</h2>
-            <div class="lifelines">
-                <button id="joker-5050" class="joker-btn">🌓 50/50</button>
-                <button id="joker-freeze" class="joker-btn">❄️ Freeze</button>
-            </div>
-            <div id="options-container" class="options"></div>
         </div>
 
-        <div id="result-screen" class="hidden">
-            <h2>Terminé !</h2>
-            <div class="score-circle">
-                <span id="final-score">0 / 0</span>
+        <div class="setup-grid">
+            <div class="setup-field">
+                <label>DIFFICULTÉ</label>
+                <div class="select-wrap">
+                    <select id="difficulty">
+                        <option value="easy">Facile</option>
+                        <option value="medium" selected>Moyen</option>
+                        <option value="hard">Difficile</option>
+                    </select>
+                </div>
             </div>
-            <p id="record-msg" class="hidden">🏆 Nouveau Record !</p>
-            <button id="restart-btn">Rejouer</button>
+            <div class="setup-field">
+                <label>CATÉGORIE</label>
+                <div class="select-wrap">
+                    <select id="category">
+                        <option value="9">Culture Générale</option>
+                        <option value="18">Informatique</option>
+                        <option value="23">Histoire</option>
+                        <option value="22">Géographie</option>
+                        <option value="21">Sport</option>
+                        <option value="11">Cinéma</option>
+                        <option value="12">Musique</option>
+                        <option value="17">Sciences</option>
+                    </select>
+                </div>
+            </div>
+            <div class="setup-field">
+                <label>MODE DE JEU</label>
+                <div class="select-wrap">
+                    <select id="game-mode">
+                        <option value="classic">Classique</option>
+                        <option value="survival">Survie (3 vies)</option>
+                    </select>
+                </div>
+            </div>
         </div>
+
+        <button id="start-btn" class="cta-btn">
+            <span>LANCER LE QUIZ</span>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </button>
     </div>
-    <script src="script.js"></script>
+</div>
+
+<!-- QUIZ SCREEN -->
+<div id="quiz-screen" class="screen">
+    <div class="quiz-inner">
+
+        <div class="quiz-topbar">
+            <div class="progress-info">
+                <span id="progress-text">1 / 10</span>
+                <div class="progress-track">
+                    <div id="progress-fill"></div>
+                </div>
+            </div>
+            <div class="streak-display" id="streak-display">
+                <span id="streak-icon">🔥</span>
+                <span id="streak-count">0</span>
+            </div>
+            <div class="score-display">
+                <span class="score-label">SCORE</span>
+                <span id="live-score">0</span>
+            </div>
+        </div>
+
+        <div class="lives-bar" id="lives-bar"></div>
+
+        <div class="timer-block">
+            <svg class="timer-ring" viewBox="0 0 60 60">
+                <circle class="ring-bg" cx="30" cy="30" r="26"/>
+                <circle class="ring-fg" id="timer-ring-fg" cx="30" cy="30" r="26"/>
+            </svg>
+            <span id="timer-num">15</span>
+        </div>
+
+        <div class="multiplier-badge" id="multiplier-badge">×1</div>
+
+        <div class="question-card" id="question-card">
+            <p class="question-category" id="question-category">Chargement...</p>
+            <h2 id="question-text">Chargement de la question...</h2>
+        </div>
+
+        <div class="lifelines">
+            <button id="joker-5050" class="lifeline-btn" title="50/50">
+                <span class="ll-icon">½</span>
+                <span class="ll-label">50/50</span>
+            </button>
+            <button id="joker-freeze" class="lifeline-btn" title="Geler le timer">
+                <span class="ll-icon">❄</span>
+                <span class="ll-label">Freeze</span>
+            </button>
+        </div>
+
+        <div id="options-container" class="options-grid"></div>
+    </div>
+</div>
+
+<!-- RESULT SCREEN -->
+<div id="result-screen" class="screen">
+    <div class="result-inner">
+        <div class="result-header">
+            <p id="result-title-label">RÉSULTAT</p>
+            <h2 id="result-emoji">🏆</h2>
+        </div>
+
+        <div class="score-ring-wrap">
+            <svg viewBox="0 0 120 120" class="score-donut">
+                <circle class="donut-bg" cx="60" cy="60" r="50"/>
+                <circle class="donut-fg" id="donut-fg" cx="60" cy="60" r="50"/>
+            </svg>
+            <div class="score-ring-text">
+                <span id="final-score-num">0</span>
+                <span class="score-ring-denom" id="final-score-denom">/ 10</span>
+            </div>
+        </div>
+
+        <div class="result-stats">
+            <div class="stat-pill">
+                <span class="stat-label">MEILLEUR STREAK</span>
+                <span class="stat-val" id="stat-streak">0</span>
+            </div>
+            <div class="stat-pill">
+                <span class="stat-label">SCORE FINAL</span>
+                <span class="stat-val" id="stat-points">0 pts</span>
+            </div>
+            <div class="stat-pill">
+                <span class="stat-label">TEMPS MOY.</span>
+                <span class="stat-val" id="stat-time">0s</span>
+            </div>
+        </div>
+
+        <p id="record-msg" class="record-msg hidden">🏆 Nouveau Record !</p>
+
+        <div class="result-name-block">
+            <input type="text" id="player-name" placeholder="Ton pseudo" maxlength="12">
+            <button id="save-score-btn" class="cta-btn secondary">SAUVEGARDER</button>
+        </div>
+
+        <button id="restart-btn" class="cta-btn">REJOUER</button>
+    </div>
+</div>
+
+<!-- PARTICLES CANVAS -->
+<canvas id="particle-canvas"></canvas>
+
+<script src="script.js"></script>
 </body>
 </html>
