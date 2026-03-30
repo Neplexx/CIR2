@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ultimate Trivia Quiz</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <div id="start-screen">
+            <h1>Trivia Master</h1>
+            <p id="best-score-display">Record : 0</p>
+            
+            <div class="setup-group">
+                <label>Difficulté</label>
+                <select id="difficulty">
+                    <option value="easy">Facile</option>
+                    <option value="medium">Moyen</option>
+                    <option value="hard">Difficile</option>
+                </select>
+
+                <label>Catégorie</label>
+                <select id="category">
+                    <option value="9">Culture Générale</option>
+                    <option value="18">Informatique</option>
+                    <option value="23">Histoire</option>
+                    <option value="22">Géographie</option>
+                </select>
+            </div>
+
+            <button id="start-btn">Lancer le Quiz</button>
+        </div>
+
+        <div id="quiz-screen" class="hidden">
+            <div class="progress-bar-container">
+                <div id="progress-fill"></div>
+            </div>
+            <div class="header">
+                <span id="progress-text">Question 1/10</span>
+                <span id="timer">⏳ 15s</span>
+            </div>
+            <h2 id="question-text">Chargement...</h2>
+            <div class="lifelines">
+                <button id="joker-5050" class="joker-btn">🌓 50/50</button>
+                <button id="joker-freeze" class="joker-btn">❄️ Freeze</button>
+            </div>
+            <div id="options-container" class="options"></div>
+        </div>
+
+        <div id="result-screen" class="hidden">
+            <h2>Terminé !</h2>
+            <div class="score-circle">
+                <span id="final-score">0 / 0</span>
+            </div>
+            <p id="record-msg" class="hidden">🏆 Nouveau Record !</p>
+            <button id="restart-btn">Rejouer</button>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,172 @@
+/* Intégration d'une police moderne */
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap');
+
+:root {
+  --primary: #818cf8; /* Indigo */
+  --primary-glow: rgba(129, 140, 248, 0.4);
+  --success: #22c55e;
+  --error: #ef4444;
+  --bg: #030712; /* Très sombre */
+  --card-bg: rgba(31, 41, 55, 0.6); /* Verre dépoli */
+  --text: #f3f4f6;
+  --border: rgba(255, 255, 255, 0.08);
+}
+
+* { box-sizing: border-box; }
+
+body {
+  background: var(--bg);
+  /* Dégradés d'ambiance en arrière-plan */
+  background-image: 
+    radial-gradient(circle at 15% 15%, rgba(99, 102, 241, 0.15) 0%, transparent 30%),
+    radial-gradient(circle at 85% 85%, rgba(168, 85, 247, 0.15) 0%, transparent 30%);
+  color: var(--text);
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  margin: 0;
+}
+
+.container {
+  width: 90%;
+  max-width: 550px;
+  background: var(--card-bg);
+  backdrop-filter: blur(12px); /* Effet verre dépoli */
+  border: 1px solid var(--border);
+  padding: 3rem;
+  border-radius: 24px;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+  text-align: center;
+}
+
+/* ⚠️ LA RÈGLE D'OR : Gérer les écrans cachés */
+.hidden { display: none !important; }
+
+/* Typographie */
+h1 { font-weight: 800; font-size: 2.2rem; letter-spacing: -1px; margin: 0 0 0.5rem 0; color: white; }
+h2 { font-weight: 600; font-size: 1.4rem; margin-top: 0; }
+#best-score-display { color: #9ca3af; margin-bottom: 2rem; font-weight: 600; }
+
+/* Styles pour les sélecteurs de configuration */
+.setup-group { display: flex; flex-direction: column; gap: 15px; margin: 2rem 0; text-align: left; }
+.setup-group label { font-weight: 600; color: #9ca3af; }
+
+select {
+  padding: 14px 18px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.04);
+  color: white;
+  border: 1px solid var(--border);
+  font-size: 1rem;
+  appearance: none; /* Enlève la flèche par défaut */
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%239ca3af'%3%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 15px center;
+  background-size: 18px;
+  transition: border-color 0.2s;
+}
+select:focus { border-color: var(--primary); outline: none; }
+
+/* Styles pour les boutons principaux (Lancer/Rejouer) */
+button#start-btn, button#restart-btn {
+  width: 100%;
+  background: var(--primary);
+  color: white;
+  padding: 18px;
+  border-radius: 14px;
+  border: none;
+  font-size: 1.1rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s;
+  box-shadow: 0 10px 15px -3px var(--primary-glow);
+}
+button#start-btn:hover, button#restart-btn:hover { transform: translateY(-2px); box-shadow: 0 15px 20px -3px var(--primary-glow); }
+
+/* Barre de progression Néon */
+.progress-bar-container { width: 100%; height: 5px; background: rgba(255, 255, 255, 0.1); border-radius: 10px; margin-bottom: 2rem; overflow: hidden; }
+#progress-fill { height: 100%; width: 0%; background: linear-gradient(90deg, var(--primary), #a855f7); box-shadow: 0 0 15px var(--primary); transition: width 0.6s ease; }
+
+/* Styles pour les options de réponse */
+.options { display: grid; gap: 12px; margin-top: 2rem; }
+.options button {
+  background: rgba(255, 255, 255, 0.03);
+  color: #d1d5db;
+  border: 1px solid var(--border);
+  padding: 18px 24px;
+  border-radius: 16px;
+  cursor: pointer;
+  font-size: 1rem;
+  font-weight: 600;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  text-align: left;
+}
+.options button:not(:disabled):hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: var(--primary);
+  transform: translateX(5px);
+  box-shadow: 0 0 20px var(--primary-glow);
+  color: white;
+}
+
+/* Feedback de réponse correcte/fausse */
+.correct { background: var(--success) !important; border-color: #34d399 !important; color: white !important; }
+.wrong { background: var(--error) !important; border-color: #f87171 !important; color: white !important; }
+
+/* Style pour le score final */
+.score-circle {
+  width: 110px; height: 110px;
+  border: 4px solid var(--primary);
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  margin: 1.5rem auto;
+  font-size: 2rem; font-weight: 800;
+  background: rgba(129, 140, 248, 0.1);
+}
+#record-msg { color: #fbbf24; font-weight: 700; margin-bottom: 2rem; animation: pulse 1.5s infinite; }
+
+@keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
+
+
+.lifelines {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+    margin-bottom: 20px;
+}
+
+.joker-btn {
+    background: rgba(255, 255, 255, 0.05) !important;
+    border: 1px solid var(--border) !important;
+    padding: 10px 20px !important;
+    width: auto !important;
+    font-size: 0.9rem !important;
+    border-radius: 12px !important;
+}
+
+.joker-btn:hover:not(:disabled) {
+    background: var(--accent) !important;
+    color: white !important;
+}
+
+.joker-btn:disabled {
+    opacity: 0.2;
+    cursor: not-allowed;
+    filter: grayscale(1);
+}
+
+/* Animation pour le timer critique */
+@keyframes shake {
+    0% { transform: translate(0); }
+    25% { transform: translate(2px, -2px); }
+    50% { transform: translate(-2px, 2px); }
+    100% { transform: translate(0); }
+}
+
+.timer-critical {
+    color: var(--error) !important;
+    animation: shake 0.1s infinite;
+    text-shadow: 0 0 10px var(--error);
+}
