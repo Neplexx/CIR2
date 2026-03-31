@@ -15,6 +15,7 @@ let questions = [], currentIndex = 0;
 let points = 0;            // weighted score
 let correctCount = 0;
 let streak = 0, bestStreak = 0;
+let peakMultiplier = 1;
 let multiplier = 1;
 let used5050 = false, usedFreeze = false, isFrozen = false;
 let timeLeft = TIMER_MAX;
@@ -22,11 +23,12 @@ let timerInterval = null;
 let lives = 3;
 let gameMode = 'classic';
 let answerTimes = [];
+let answerResults = []; // 'correct' | 'wrong' | 'timeout'
 let questionStart = 0;
 let currentCategory = '';
 
 // ── DOM ───────────────────────────────────────────────────────────
-const screens      = { start: $('#start-screen'), quiz: $('#quiz-screen'), result: $('#result-screen') };
+const screens      = { start: $('#start-screen'), quiz: $('#quiz-screen'), result: $('#result-screen'), stats: $('#stats-screen') };
 const progressFill = $('#progress-fill');
 const progressText = $('#progress-text');
 const timerNum     = $('#timer-num');
@@ -55,36 +57,152 @@ const resultEmoji  = $('#result-emoji');
 const playerName   = $('#player-name');
 const saveScoreBtn = $('#save-score-btn');
 const lbList       = $('#leaderboard-list');
+const statsBtn     = $('#stats-btn');
+const statsBackBtn = $('#stats-back-btn');
 
 function $(sel) { return document.querySelector(sel); }
 
-// ── AUDIO (Web Audio API) ─────────────────────────────────────────
+// ── AUDIO ENGINE (Web Audio API — fully adaptive) ─────────────────
 let audioCtx;
 
 function getAudioCtx() {
-  if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  if (!audioCtx) {
+    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    // Master compressor so nothing clips
+    const comp = audioCtx.createDynamicsCompressor();
+    comp.threshold.value = -18;
+    comp.ratio.value = 4;
+    comp.attack.value = 0.003;
+    comp.release.value = 0.15;
+    comp.connect(audioCtx.destination);
+    audioCtx._master = comp;
+  }
   return audioCtx;
 }
 
-function beep(freq, type, duration, vol = 0.3) {
+function getOut() { const c = getAudioCtx(); return c._master; }
+
+function tone(freq, type, start, duration, vol = 0.25, pitchEnd = null) {
   try {
     const ctx = getAudioCtx();
     const osc = ctx.createOscillator();
     const gain = ctx.createGain();
-    osc.connect(gain); gain.connect(ctx.destination);
+    osc.connect(gain); gain.connect(getOut());
     osc.type = type;
-    osc.frequency.setValueAtTime(freq, ctx.currentTime);
-    gain.gain.setValueAtTime(vol, ctx.currentTime);
-    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + duration);
-    osc.start(ctx.currentTime);
-    osc.stop(ctx.currentTime + duration);
+    osc.frequency.setValueAtTime(freq, ctx.currentTime + start);
+    if (pitchEnd !== null)
+      osc.frequency.linearRampToValueAtTime(pitchEnd, ctx.currentTime + start + duration);
+    gain.gain.setValueAtTime(0, ctx.currentTime + start);
+    gain.gain.linearRampToValueAtTime(vol, ctx.currentTime + start + 0.01);
+    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + start + duration);
+    osc.start(ctx.currentTime + start);
+    osc.stop(ctx.currentTime + start + duration + 0.05);
   } catch(e) {}
 }
 
-function playCorrect() { beep(660, 'sine', 0.18, 0.25); setTimeout(() => beep(880, 'sine', 0.22, 0.2), 80); }
-function playWrong()   { beep(220, 'sawtooth', 0.25, 0.2); }
-function playTick()    { beep(880, 'square', 0.06, 0.05); }
-function playFreeze()  { beep(1200, 'sine', 0.08, 0.12); setTimeout(() => beep(900, 'sine', 0.1, 0.15), 60); }
+function noise(duration, vol = 0.08) {
+  try {
+    const ctx = getAudioCtx();
+    const buf = ctx.createBuffer(1, ctx.sampleRate * duration, ctx.sampleRate);
+    const data = buf.getChannelData(0);
+    for (let i = 0; i < data.length; i++) data[i] = Math.random() * 2 - 1;
+    const src = ctx.createBufferSource();
+    src.buffer = buf;
+    const gain = ctx.createGain();
+    const filt = ctx.createBiquadFilter();
+    filt.type = 'bandpass'; filt.frequency.value = 1200; filt.Q.value = 0.5;
+    src.connect(filt); filt.connect(gain); gain.connect(getOut());
+    gain.gain.setValueAtTime(vol, ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + duration);
+    src.start(); src.stop(ctx.currentTime + duration + 0.05);
+  } catch(e) {}
+}
+
+// ── Correct: pitch rises with streak level ──────────────────────
+function playCorrect(currentStreak = 0) {
+  // Base interval — rises with streak
+  const base = 440 + Math.min(currentStreak, 6) * 40;
+  const third = base * 1.26;
+  const fifth = base * 1.498;
+
+  if (currentStreak >= 7) {
+    // Full chord fanfare
+    tone(base,  'sine',     0,    0.3, 0.2);
+    tone(third, 'sine',     0.02, 0.3, 0.18);
+    tone(fifth, 'sine',     0.04, 0.3, 0.16);
+    tone(base * 2, 'sine',  0.1,  0.25, 0.12);
+    noise(0.06, 0.06);
+  } else if (currentStreak >= 5) {
+    // Bright arpeggio
+    tone(base,  'sine', 0,    0.18, 0.22);
+    tone(third, 'sine', 0.07, 0.18, 0.2);
+    tone(fifth, 'sine', 0.14, 0.22, 0.18);
+  } else if (currentStreak >= 3) {
+    // Double tone, ascending
+    tone(base,  'sine', 0,    0.16, 0.22);
+    tone(fifth, 'sine', 0.09, 0.2,  0.18);
+  } else {
+    // Simple rising pair
+    tone(520, 'sine', 0,    0.14, 0.2);
+    tone(780, 'sine', 0.08, 0.18, 0.18);
+  }
+}
+
+// ── Wrong: harsher with longer wrong streaks ─────────────────────
+function playWrong() {
+  tone(220, 'sawtooth', 0,    0.15, 0.18, 180);
+  tone(160, 'square',   0.08, 0.2,  0.12);
+  noise(0.1, 0.06);
+}
+
+// ── Tick: urgency increases under 5s ────────────────────────────
+function playTick(timeLeft = 5) {
+  const freq = timeLeft <= 2 ? 1200 : timeLeft <= 4 ? 1000 : 880;
+  const vol  = timeLeft <= 2 ? 0.12 : 0.07;
+  tone(freq, 'square', 0, 0.05, vol);
+}
+
+// ── Combo level-up: plays on hitting 3, 5, 7 streak ─────────────
+function playComboUp(level) {
+  // Ascending sweep unique per level
+  const freqs = { 3: [400, 600], 5: [500, 750, 1000], 7: [600, 900, 1200, 1500] };
+  const seq = freqs[level] || [500, 800];
+  seq.forEach((f, i) => tone(f, 'sine', i * 0.07, 0.12, 0.18));
+}
+
+// ── Freeze: icy shimmer ──────────────────────────────────────────
+function playFreeze() {
+  [1800, 1400, 1100, 900, 700].forEach((f, i) =>
+    tone(f, 'sine', i * 0.055, 0.1, 0.1)
+  );
+}
+
+// ── Fast answer bonus ─────────────────────────────────────────────
+function playSpeedBonus() {
+  tone(1047, 'sine', 0,    0.1, 0.15);
+  tone(1319, 'sine', 0.06, 0.1, 0.15);
+  tone(1568, 'sine', 0.12, 0.14, 0.12);
+}
+
+// ── Game over (survival) ──────────────────────────────────────────
+function playGameOver() {
+  tone(300, 'sawtooth', 0,    0.3, 0.2, 180);
+  tone(240, 'sawtooth', 0.25, 0.4, 0.18, 120);
+  tone(120, 'square',   0.55, 0.5, 0.15);
+  noise(0.4, 0.08);
+}
+
+// ── Result fanfare ────────────────────────────────────────────────
+function playResultFanfare(pct) {
+  if (pct >= 0.9) {
+    [523, 659, 784, 1047].forEach((f, i) => tone(f, 'sine', i * 0.1, 0.35, 0.15));
+  } else if (pct >= 0.5) {
+    tone(440, 'sine', 0, 0.2, 0.15);
+    tone(554, 'sine', 0.15, 0.2, 0.12);
+  } else {
+    tone(330, 'triangle', 0, 0.3, 0.12, 280);
+  }
+}
 
 // ── BACKGROUND CANVAS ────────────────────────────────────────────
 (function initBg() {
@@ -264,9 +382,10 @@ function renderLives() {
 // ── QUIZ START ────────────────────────────────────────────────────
 async function startQuiz() {
   currentIndex = 0; points = 0; correctCount = 0;
-  streak = 0; bestStreak = 0; multiplier = 1;
+  streak = 0; bestStreak = 0; multiplier = 1; peakMultiplier = 1;
   used5050 = false; usedFreeze = false; isFrozen = false;
   answerTimes = [];
+  answerResults = [];
   gameMode = $('#game-mode').value;
   lives = 3;
 
@@ -356,7 +475,7 @@ function startTimer() {
     if (timeLeft <= 5) {
       timerNum.classList.add('critical');
       timerRingFg.classList.add('critical');
-      playTick();
+      playTick(timeLeft);
     }
     if (timeLeft <= 0) {
       handleAnswer(null, questions[currentIndex].correct, null);
@@ -385,6 +504,7 @@ function handleAnswer(selected, correct, btn) {
   if (isCorrect) {
     // Points = base 100 × multiplier × time bonus
     const timeBonus = Math.ceil((timeLeft / TIMER_MAX) * 50);
+    const isSpeedBonus = timeLeft >= TIMER_MAX - 4; // answered in first 4s
     const gained = (100 + timeBonus) * multiplier;
     points += gained;
     correctCount++;
@@ -392,34 +512,53 @@ function handleAnswer(selected, correct, btn) {
     bestStreak = Math.max(bestStreak, streak);
 
     // Multiplier ramp: 1 → 1.5 → 2 → 3 after 3, 5, 7 correct
+    const prevMult = multiplier;
     if (streak >= 7)      multiplier = 3;
     else if (streak >= 5) multiplier = 2;
     else if (streak >= 3) multiplier = 1.5;
     else                  multiplier = 1;
+    if (multiplier > peakMultiplier) peakMultiplier = multiplier;
 
     streakCount.textContent = streak;
     if (streak >= 2) streakDisplay.classList.add('active');
 
     updateMultiplierBadge();
     popScore();
-    playCorrect();
+
+    // Adaptive audio: combo level-up sound OR speed bonus OR regular
+    if (multiplier > prevMult) {
+      const lvl = streak >= 7 ? 7 : streak >= 5 ? 5 : 3;
+      playComboUp(lvl);
+    } else if (isSpeedBonus) {
+      playSpeedBonus();
+    } else {
+      playCorrect(streak);
+    }
+
+    answerResults.push('correct');
 
     if (btn) {
       btn.classList.add('correct');
-      // Burst particles at button center
       const rect = btn.getBoundingClientRect();
       burstParticles(rect.left + rect.width/2, rect.top + rect.height/2, 'rgba(61,214,140,');
     }
   } else {
+    const wasTimeout = selected === null;
     streak = 0;
     multiplier = 1;
     streakCount.textContent = 0;
     streakDisplay.classList.remove('active');
     updateMultiplierBadge();
-    playWrong();
+
+    if (wasTimeout) {
+      answerResults.push('timeout');
+      playWrong();
+    } else {
+      answerResults.push('wrong');
+      playWrong();
+    }
 
     if (btn) btn.classList.add('wrong');
-    // Reveal correct answer
     Array.from(allBtns).find(b => b.textContent === decodedCorrect)?.classList.add('correct');
 
     if (navigator.vibrate) navigator.vibrate(220);
@@ -428,6 +567,7 @@ function handleAnswer(selected, correct, btn) {
       lives--;
       renderLives();
       if (lives <= 0) {
+        playGameOver();
         setTimeout(showEnd, 1500);
         return;
       }
@@ -527,6 +667,123 @@ function showEnd() {
   }
 
   showScreen('result');
+
+  // Fanfare on result
+  setTimeout(() => playResultFanfare(correctCount / total), 400);
+}
+
+// ── STATS SCREEN ──────────────────────────────────────────────────
+function showStats() {
+  const total = answerTimes.length;
+  if (!total) return;
+
+  // Top cards
+  const accuracy = Math.round((correctCount / total) * 100);
+  const bestTime  = Math.min(...answerTimes).toFixed(1);
+  const worstTime = Math.max(...answerTimes).toFixed(1);
+
+  $('#st-accuracy').textContent  = `${accuracy}%`;
+  $('#st-best-time').textContent = `${bestTime}s`;
+  $('#st-worst-time').textContent= `${worstTime}s`;
+  $('#st-combo-peak').textContent= `×${peakMultiplier}`;
+
+  // Timeline pills
+  const timeline = $('#answers-timeline');
+  timeline.innerHTML = '';
+  answerResults.forEach((res, i) => {
+    const t = answerTimes[i];
+    const pip = document.createElement('div');
+    pip.className = 'ans-pip';
+    pip.innerHTML = `
+      <div class="ans-pip-dot ${res}">${res === 'correct' ? '✓' : res === 'wrong' ? '✗' : '⏱'}</div>
+      <span class="ans-pip-time">${t ? t.toFixed(1)+'s' : '-'}</span>
+    `;
+    timeline.appendChild(pip);
+  });
+
+  // Bar chart canvas
+  drawStatsChart();
+  showScreen('stats');
+}
+
+function drawStatsChart() {
+  const canvas = document.getElementById('stats-chart');
+  const dpr = window.devicePixelRatio || 1;
+  const W = canvas.offsetWidth || 460;
+  const H = 120;
+  canvas.width  = W * dpr;
+  canvas.height = H * dpr;
+  canvas.style.width  = W + 'px';
+  canvas.style.height = H + 'px';
+
+  const ctx = canvas.getContext('2d');
+  ctx.scale(dpr, dpr);
+  ctx.clearRect(0, 0, W, H);
+
+  const n = answerTimes.length;
+  if (!n) return;
+
+  const padL = 28, padR = 10, padT = 10, padB = 24;
+  const chartW = W - padL - padR;
+  const chartH = H - padT - padB;
+  const maxT = TIMER_MAX;
+
+  // Grid lines
+  ctx.strokeStyle = 'rgba(255,255,255,0.05)';
+  ctx.lineWidth = 1;
+  [0.25, 0.5, 0.75, 1].forEach(frac => {
+    const y = padT + chartH * (1 - frac);
+    ctx.beginPath();
+    ctx.moveTo(padL, y); ctx.lineTo(padL + chartW, y);
+    ctx.stroke();
+    ctx.fillStyle = 'rgba(255,255,255,0.2)';
+    ctx.font = `${9 * dpr / dpr}px DM Sans`;
+    ctx.textAlign = 'right';
+    ctx.fillText(`${Math.round(frac * maxT)}s`, padL - 4, y + 3);
+  });
+
+  const barW = Math.min((chartW / n) * 0.65, 28);
+  const gap  = chartW / n;
+
+  answerTimes.forEach((t, i) => {
+    const res = answerResults[i];
+    const frac = Math.min(t / maxT, 1);
+    const barH = frac * chartH;
+    const x = padL + i * gap + (gap - barW) / 2;
+    const y = padT + chartH - barH;
+
+    // Bar color by result
+    const color = res === 'correct'
+      ? 'rgba(61,214,140,0.75)'
+      : res === 'wrong'
+        ? 'rgba(241,80,74,0.7)'
+        : 'rgba(100,100,120,0.5)';
+
+    // Glow
+    ctx.shadowColor = color;
+    ctx.shadowBlur  = 6;
+
+    const radius = 4;
+    ctx.beginPath();
+    ctx.moveTo(x + radius, y);
+    ctx.lineTo(x + barW - radius, y);
+    ctx.quadraticCurveTo(x + barW, y, x + barW, y + radius);
+    ctx.lineTo(x + barW, y + barH);
+    ctx.lineTo(x, y + barH);
+    ctx.lineTo(x, y + radius);
+    ctx.quadraticCurveTo(x, y, x + radius, y);
+    ctx.closePath();
+    ctx.fillStyle = color;
+    ctx.fill();
+
+    ctx.shadowBlur = 0;
+
+    // Q number label
+    ctx.fillStyle = 'rgba(255,255,255,0.3)';
+    ctx.font = `${8}px DM Sans`;
+    ctx.textAlign = 'center';
+    ctx.fillText(`Q${i+1}`, padL + i * gap + gap / 2, H - padB + 12);
+  });
 }
 
 // ── SAVE SCORE ────────────────────────────────────────────────────
@@ -545,8 +802,10 @@ restartBtn.onclick= () => {
   playerName.value = '';
   startQuiz();
 };
-btn5050.onclick   = use5050;
-btnFreeze.onclick = useFreeze;
+btn5050.onclick      = use5050;
+btnFreeze.onclick    = useFreeze;
+statsBtn.onclick     = showStats;
+statsBackBtn.onclick = () => showScreen('result');
 
 // ── INIT ─────────────────────────────────────────────────────────
 renderLeaderboard();

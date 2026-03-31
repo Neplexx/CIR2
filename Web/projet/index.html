@@ -167,6 +167,45 @@
         </div>
 
         <button id="restart-btn" class="cta-btn">REJOUER</button>
+        <button id="stats-btn" class="cta-btn secondary" style="margin-top:0.6rem">📊 VOIR LES STATS</button>
+    </div>
+</div>
+
+<!-- STATS SCREEN -->
+<div id="stats-screen" class="screen">
+    <div class="stats-inner">
+        <div class="stats-header">
+            <p class="block-label">ANALYSE DE PARTIE</p>
+            <h2 class="stats-title">STATISTIQUES</h2>
+        </div>
+
+        <div class="stats-grid-top">
+            <div class="stat-card">
+                <span class="stat-card-val" id="st-accuracy">0%</span>
+                <span class="stat-card-label">PRÉCISION</span>
+            </div>
+            <div class="stat-card">
+                <span class="stat-card-val" id="st-best-time">0s</span>
+                <span class="stat-card-label">TEMPS MIN</span>
+            </div>
+            <div class="stat-card">
+                <span class="stat-card-val" id="st-worst-time">0s</span>
+                <span class="stat-card-label">TEMPS MAX</span>
+            </div>
+            <div class="stat-card">
+                <span class="stat-card-val" id="st-combo-peak">×0</span>
+                <span class="stat-card-label">COMBO MAX</span>
+            </div>
+        </div>
+
+        <div class="chart-block">
+            <p class="block-label" style="margin-bottom:0.6rem">TEMPS DE RÉPONSE PAR QUESTION</p>
+            <canvas id="stats-chart"></canvas>
+        </div>
+
+        <div class="answers-timeline" id="answers-timeline"></div>
+
+        <button id="stats-back-btn" class="cta-btn" style="margin-top:1rem">← RETOUR</button>
     </div>
 </div>
 
