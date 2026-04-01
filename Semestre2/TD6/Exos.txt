@@ -1,0 +1,6 @@
+Question 1 : 
+
+Pour les colis, on pourrait utiliser une matrice (vecteur dans un autre vecteur),
+pour ce qui est des villes, on pourrait enregistrer de la meme manière avec une matrice, les distances entre chacune en notant
+l'indice de chacun (0 pour Lille par exemple)
+On va donc utiliser un vecteur dans un autre vecteur pour former une matrice
