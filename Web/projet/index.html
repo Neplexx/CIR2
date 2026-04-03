@@ -15,6 +15,19 @@
 <!-- START SCREEN -->
 <div id="start-screen" class="screen active">
     <div class="start-inner">
+
+        <div class="profile-bar" id="profile-bar">
+            <div class="profile-avatar" id="profile-avatar">?</div>
+            <div class="profile-info">
+                <div class="profile-level-name" id="profile-level-name">NOVICE</div>
+                <div class="profile-xp-track">
+                    <div class="profile-xp-fill" id="profile-xp-fill"></div>
+                </div>
+                <div class="profile-xp-label" id="profile-xp-label">0 / 500 XP</div>
+            </div>
+            <button class="profile-badges-btn" id="open-badges-btn" title="Badges">🏅</button>
+        </div>
+
         <div class="logo-block">
             <span class="logo-eyebrow">ULTIMATE</span>
             <h1 class="logo-title">TRIVIA<br>MASTER</h1>
@@ -23,9 +36,7 @@
 
         <div class="best-scores-block">
             <p class="block-label">MEILLEURS SCORES</p>
-            <div id="leaderboard-list">
-                <span class="no-scores">Aucun score enregistré</span>
-            </div>
+            <div id="leaderboard-list"><span class="no-scores">Aucun score enregistré</span></div>
         </div>
 
         <div class="setup-grid">
@@ -60,6 +71,7 @@
                     <select id="game-mode">
                         <option value="classic">Classique</option>
                         <option value="survival">Survie (3 vies)</option>
+                        <option value="chrono">⏱ Contre la montre</option>
                     </select>
                 </div>
             </div>
@@ -72,16 +84,13 @@
     </div>
 </div>
 
-<!-- QUIZ SCREEN -->
+<!-- QUIZ SCREEN (classic / survival) -->
 <div id="quiz-screen" class="screen">
     <div class="quiz-inner">
-
         <div class="quiz-topbar">
             <div class="progress-info">
                 <span id="progress-text">1 / 10</span>
-                <div class="progress-track">
-                    <div id="progress-fill"></div>
-                </div>
+                <div class="progress-track"><div id="progress-fill"></div></div>
             </div>
             <div class="streak-display" id="streak-display">
                 <span id="streak-icon">🔥</span>
@@ -111,17 +120,59 @@
         </div>
 
         <div class="lifelines">
-            <button id="joker-5050" class="lifeline-btn" title="50/50">
-                <span class="ll-icon">½</span>
-                <span class="ll-label">50/50</span>
+            <button id="joker-5050" class="lifeline-btn">
+                <span class="ll-icon">½</span><span class="ll-label">50/50</span>
             </button>
-            <button id="joker-freeze" class="lifeline-btn" title="Geler le timer">
-                <span class="ll-icon">❄</span>
-                <span class="ll-label">Freeze</span>
+            <button id="joker-freeze" class="lifeline-btn">
+                <span class="ll-icon">❄</span><span class="ll-label">Freeze</span>
             </button>
         </div>
 
         <div id="options-container" class="options-grid"></div>
+    </div>
+</div>
+
+<!-- CHRONO SCREEN -->
+<div id="chrono-screen" class="screen">
+    <div class="chrono-inner">
+
+        <div class="chrono-topbar">
+            <div class="chrono-stat-block">
+                <span class="chrono-stat-label">SCORE</span>
+                <span id="chrono-score" class="chrono-stat-val">0</span>
+            </div>
+            <div class="chrono-stat-block">
+                <span class="chrono-stat-label">STREAK</span>
+                <span id="chrono-streak" class="chrono-stat-val">🔥0</span>
+            </div>
+            <div class="chrono-stat-block">
+                <span class="chrono-stat-label">RÉPONSES</span>
+                <span id="chrono-count" class="chrono-stat-val">0</span>
+            </div>
+        </div>
+
+        <!-- Big countdown bar -->
+        <div class="chrono-timer-wrap">
+            <div class="chrono-time-display">
+                <span id="chrono-time-num">90</span>
+                <span class="chrono-time-unit">s</span>
+            </div>
+            <div class="chrono-bar-track">
+                <div class="chrono-bar-fill" id="chrono-bar-fill"></div>
+            </div>
+        </div>
+
+        <div class="chrono-mult-row">
+            <div class="chrono-multiplier hidden" id="chrono-multiplier">×1</div>
+            <div class="chrono-feedback" id="chrono-feedback"></div>
+        </div>
+
+        <div class="chrono-question-card" id="chrono-question-card">
+            <p class="question-category" id="chrono-question-cat">—</p>
+            <h2 id="chrono-question-text">Chargement...</h2>
+        </div>
+
+        <div id="chrono-options" class="options-grid"></div>
     </div>
 </div>
 
@@ -159,6 +210,27 @@
             </div>
         </div>
 
+        <!-- XP Block -->
+        <div class="xp-gain-block" id="xp-gain-block">
+            <div class="xp-gain-header">
+                <span class="xp-gain-label">XP GAGNÉE</span>
+                <span class="xp-gain-amount" id="xp-gain-amount">+0 XP</span>
+            </div>
+            <div class="xp-bar-track">
+                <div class="xp-bar-before" id="xp-bar-before"></div>
+                <div class="xp-bar-fill" id="xp-bar-result-fill"></div>
+            </div>
+            <div class="xp-bar-meta">
+                <span id="xp-bar-level-name">NOVICE</span>
+                <span id="xp-bar-progress">0 / 500 XP</span>
+            </div>
+            <div class="levelup-banner hidden" id="levelup-banner">
+                <span>⬆</span>
+                <span id="levelup-text">NIVEAU SUPÉRIEUR !</span>
+            </div>
+            <div class="new-badges" id="new-badges"></div>
+        </div>
+
         <p id="record-msg" class="record-msg hidden">🏆 Nouveau Record !</p>
 
         <div class="result-name-block">
@@ -167,7 +239,7 @@
         </div>
 
         <button id="restart-btn" class="cta-btn">REJOUER</button>
-        <button id="stats-btn" class="cta-btn secondary" style="margin-top:0.6rem">📊 VOIR LES STATS</button>
+        <button id="stats-btn" class="cta-btn secondary" style="margin-top:0.6rem;width:100%">📊 VOIR LES STATS</button>
     </div>
 </div>
 
@@ -178,40 +250,33 @@
             <p class="block-label">ANALYSE DE PARTIE</p>
             <h2 class="stats-title">STATISTIQUES</h2>
         </div>
-
         <div class="stats-grid-top">
-            <div class="stat-card">
-                <span class="stat-card-val" id="st-accuracy">0%</span>
-                <span class="stat-card-label">PRÉCISION</span>
-            </div>
-            <div class="stat-card">
-                <span class="stat-card-val" id="st-best-time">0s</span>
-                <span class="stat-card-label">TEMPS MIN</span>
-            </div>
-            <div class="stat-card">
-                <span class="stat-card-val" id="st-worst-time">0s</span>
-                <span class="stat-card-label">TEMPS MAX</span>
-            </div>
-            <div class="stat-card">
-                <span class="stat-card-val" id="st-combo-peak">×0</span>
-                <span class="stat-card-label">COMBO MAX</span>
-            </div>
+            <div class="stat-card"><span class="stat-card-val" id="st-accuracy">0%</span><span class="stat-card-label">PRÉCISION</span></div>
+            <div class="stat-card"><span class="stat-card-val" id="st-best-time">0s</span><span class="stat-card-label">TEMPS MIN</span></div>
+            <div class="stat-card"><span class="stat-card-val" id="st-worst-time">0s</span><span class="stat-card-label">TEMPS MAX</span></div>
+            <div class="stat-card"><span class="stat-card-val" id="st-combo-peak">×0</span><span class="stat-card-label">COMBO MAX</span></div>
         </div>
-
         <div class="chart-block">
             <p class="block-label" style="margin-bottom:0.6rem">TEMPS DE RÉPONSE PAR QUESTION</p>
             <canvas id="stats-chart"></canvas>
         </div>
-
         <div class="answers-timeline" id="answers-timeline"></div>
-
         <button id="stats-back-btn" class="cta-btn" style="margin-top:1rem">← RETOUR</button>
     </div>
 </div>
 
-<!-- PARTICLES CANVAS -->
-<canvas id="particle-canvas"></canvas>
+<!-- BADGES MODAL -->
+<div id="badges-modal" class="modal-overlay hidden">
+    <div class="modal-card">
+        <div class="modal-header">
+            <h3 class="modal-title">MES BADGES</h3>
+            <button id="close-badges-btn" class="modal-close">✕</button>
+        </div>
+        <div class="badges-grid" id="badges-grid"></div>
+    </div>
+</div>
 
+<canvas id="particle-canvas"></canvas>
 <script src="script.js"></script>
 </body>
 </html>
