@@ -1,9 +1,3 @@
-/* ================================================================
-   TRIVIA MASTER — script.js
-   + Système XP / Niveaux / Badges (localStorage)
-   + Mode Contre la montre (chrono)
-   ================================================================ */
-
 // ── CONFIG ───────────────────────────────────────────────────────
 const BASE_API    = "https://opentdb.com/api.php?amount=10&type=multiple";
 const TIMER_MAX   = 15;
@@ -495,7 +489,7 @@ function handleAnswer(selected, correct, btn) {
   if (isCorrect) {
     const timeBonus=Math.ceil((timeLeft/TIMER_MAX)*50);
     const isSpeed=timeLeft>=TIMER_MAX-4;
-    if (isSpeed) fastAnswerCount++;
+    if (isSpeed) fastAnswerCount+=1;
     const gained=(100+timeBonus)*multiplier;
     points+=gained; correctCount++; streak++; bestStreak=Math.max(bestStreak,streak);
 
@@ -625,7 +619,7 @@ function handleChronoAnswer(selected, correct) {
 
   const decodedCorrect=decode(correct);
   const isCorrect = decode(selected)===decodedCorrect || selected===correct;
-  chronoTotal++;
+  chronoTotal+=1;
 
   if (isCorrect) {
     chronoCorrect++; chronoStreak++; chronoBestStreak=Math.max(chronoBestStreak,chronoStreak);
